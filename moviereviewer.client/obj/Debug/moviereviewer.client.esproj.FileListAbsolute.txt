@@ -1,1 +1,2 @@
 C:\Users\35196\source\repos\MovieReviewer\moviereviewer.client\obj\Debug\moviereviewer.client.esproj.CoreCompileInputs.cache
+C:\Users\35196\Desktop\MovieProject\review-share-project\moviereviewer.client\obj\Debug\moviereviewer.client.esproj.CoreCompileInputs.cache

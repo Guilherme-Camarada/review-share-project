@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:53896",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\35196\\source\\repos\\MovieReviewer\\MovieReviewer.Server\\..\\moviereviewer.client",
+"WorkingDirectory": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\..\\moviereviewer.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }
