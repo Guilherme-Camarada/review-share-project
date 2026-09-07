@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "MovieReviewer.Server/1.0.0": {
+        "dependencies": {
+          "Microsoft.AspNetCore.SpaProxy": "10.0.11"
+        },
+        "runtime": {
+          "MovieReviewer.Server.dll": {}
+        }
+      },
+      "Microsoft.AspNetCore.SpaProxy/10.0.11": {
+        "runtime": {
+          "lib/net10.0/Microsoft.AspNetCore.SpaProxy.dll": {
+            "assemblyVersion": "10.0.11.0",
+            "fileVersion": "10.0.1126.37416"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MovieReviewer.Server/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.AspNetCore.SpaProxy/10.0.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bu1oRqZVuvBXTXFMciLm57Gledjv6Y8veHmXtayLOjkoHm/2hNd35dZOA9hko6VQhmbQuPIQQNerbpJHyibzVw==",
+      "path": "microsoft.aspnetcore.spaproxy/10.0.11",
+      "hashPath": "microsoft.aspnetcore.spaproxy.10.0.11.nupkg.sha512"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Novo Perfil",
+    "Projects": [
+      {
+        "Path": "moviereviewer.client\\moviereviewer.client.esproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "MovieReviewer.Server\\MovieReviewer.Server.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="moviereviewer.client/moviereviewer.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="MovieReviewer.Server/MovieReviewer.Server.csproj" />
+</Solution>
