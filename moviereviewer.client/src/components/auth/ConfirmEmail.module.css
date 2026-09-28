@@ -1,0 +1,127 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f6f5f1; /* Matches ResetPassword neutral canvas */
+    padding: 1.5rem;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2.75rem 2.25rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+}
+
+.loadingState,
+.successState,
+.errorState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Spinner matching primary blue */
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 3.5px solid #e2e8f0;
+    border-top: 3.5px solid #1d72fe;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.successIcon {
+    font-size: 3.5rem;
+    color: #16a34a;
+    font-weight: bold;
+    line-height: 1;
+    animation: popIn 0.4s ease-out;
+}
+
+.errorIcon {
+    font-size: 3.5rem;
+    color: #ef4444;
+    font-weight: bold;
+    line-height: 1;
+    animation: popIn 0.4s ease-out;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.message {
+    font-size: 0.95rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.redirectText {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    font-style: italic;
+    animation: pulse 1.5s ease-in-out infinite;
+    margin-top: 0.25rem;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Button matching ResetPassword and AuthModal primary CTA */
+.button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    margin-top: 0.75rem;
+    width: 100%;
+}
+
+    .button:hover {
+        background-color: #2563eb;
+    }
+
+    .button:active {
+        background-color: #1d4ed8;
+    }

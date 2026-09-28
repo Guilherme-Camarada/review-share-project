@@ -1,0 +1,296 @@
+.header {
+    width: 100%;
+    background-color: #f7f4ee;
+    border-bottom: 1px solid #e7e2d6;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.15rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+/* Brand */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+    cursor: pointer;
+    user-select: none;
+}
+
+.brandIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: #0f172a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1rem;
+}
+
+.brandText {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+/* Search Bar */
+.searchWrapper {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.55rem 1rem 0.55rem 2.6rem;
+    background-color: #ffffff;
+    border: 1px solid #dcd7cc;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+    .searchInput::placeholder {
+        color: #94a3b8;
+    }
+
+    .searchInput:focus {
+        border-color: #94a3b8;
+        box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05);
+    }
+
+/* Action Controls Container */
+.actionsGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Guest Mode Buttons (Matching Bottom Nav) */
+.loginBtn {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #0f172a;
+    letter-spacing: 0.04em;
+    transition: background-color 0.15s;
+}
+
+    .loginBtn:hover {
+        background-color: #ebe6dc;
+    }
+
+.signUpBtn {
+    background-color: #0f172a;
+    border: 1px solid #0f172a;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+}
+
+    .signUpBtn:hover {
+        opacity: 0.9;
+    }
+
+/* Authenticated Controls */
+/* Authenticated Controls */
+.userMenuWrapper {
+    position: relative;
+    display: inline-flex;
+}
+
+.userMenuButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.95rem;
+    min-height: 38px;
+    background-color: #ffffff;
+    border: 1px solid #dcd7cc;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+    .userMenuButton:hover {
+        background-color: #f8fafc;
+        border-color: #cbd5e1;
+    }
+
+.userMenuText {
+    display: inline-block;
+    line-height: 1;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.userMenuCaret {
+    font-size: 0.75rem;
+    line-height: 1;
+    color: #334155;
+    transition: transform 0.15s ease;
+}
+
+.userMenuCaretOpen {
+    transform: rotate(180deg);
+}
+
+/* Anchored Dropdown */
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0; /* Aligns with the right border of the name box */
+    min-width: 120px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.dropdownItem {
+    width: 100%;
+    text-align: left;
+    padding: 0.65rem 1rem;
+    background: transparent;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #dc2626;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+    .dropdownItem:hover {
+        background-color: #fef2f2;
+    }
+
+.avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    min-width: 130px;
+    z-index: 60;
+    overflow: hidden;
+}
+
+.dropdownItem {
+    width: 100%;
+    text-align: left;
+    padding: 0.65rem 1rem;
+    background: transparent;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+    .dropdownItem:hover {
+        background-color: #fef2f2;
+    }
+
+.notificationButton {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    background-color: #ffffff;
+    border: 1px solid #dcd7cc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #0f172a;
+}
+
+.notificationBadge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: #0070f3;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rateLogButton {
+    background-color: #0070f3;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.15rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: background-color 0.15s;
+}
+
+    .rateLogButton:hover {
+        background-color: #005bb5;
+    }

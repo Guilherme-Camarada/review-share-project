@@ -1,58 +1,125 @@
-﻿import { useEffect, useState } from 'react';
-import './App.css';
+﻿import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Navbar } from './components/navbar/Navbar';
+import { LandingPage } from './components/landing/LandingPage';
+import { Dashboard } from './components/dashboard/Dashboard';
+import { AuthModal } from './components/auth/AuthModal';
+import { ConfirmEmail } from './components/auth/ConfirmEmail';
+import { ResetPassword } from './components/auth/ResetPassword';
+import { checkAuthStatus, logoutUser } from './api/authApi';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+interface User {
+    nickname: string;
+    userEmail: string;
 }
 
-function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
+export default function App() {
+    const navigate = useNavigate();
+    const [currentUser, setCurrentUser] = useState<User | null>(() => {
+        const savedUser = localStorage.getItem('currentUser');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
-    return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
-        </div>
+    const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(() =>
+        !localStorage.getItem('currentUser')
     );
 
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
-}
+    const [authModalOpen, setAuthModalOpen] = useState(false);
+    const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
-export default App;
+    useEffect(() => {
+        checkAuthStatus()
+            .then((data: any) => {
+                const validatedUser: User = {
+                    nickname: data.nickname || 'User',
+                    userEmail: data.userEmail || ''
+                };
+                setCurrentUser(validatedUser);
+                localStorage.setItem('currentUser', JSON.stringify(validatedUser));
+            })
+            .catch((_error) => {
+                setCurrentUser(null);
+                localStorage.removeItem('currentUser');
+            })
+            .finally(() => {
+                setIsCheckingAuth(false);
+            });
+    }, []);
+
+    const openAuth = (mode: 'login' | 'signup') => {
+        setAuthMode(mode);
+        setAuthModalOpen(true);
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+        } catch (error) {
+            console.error('Logout request failed on server:', error);
+        } finally {
+            // Instantly clear memory and stored session so the UI switches without page reload
+            setCurrentUser(null);
+            localStorage.removeItem('currentUser');
+            sessionStorage.clear();
+            navigate('/');
+        }
+    };
+
+    if (isCheckingAuth) return null;
+
+    return (
+        <>
+            <Routes>
+                {/* Confirm Email Route */}
+                <Route path="/confirm-email" element={<ConfirmEmail onUserLoggedIn={(userData) => {
+                    const validatedUser: User = {
+                        nickname: userData.nickname,
+                        userEmail: userData.userEmail,
+                    };
+                    setCurrentUser(validatedUser);
+                    localStorage.setItem('currentUser', JSON.stringify(validatedUser));
+                }} />} />
+
+                <Route path="/reset-password" element={<ResetPassword />} />
+
+                {/* Main App Routes */}
+                <Route path="/*" element={
+                    <>
+                        <Navbar
+                            currentUser={currentUser}
+                            onSearch={(query) => console.log('Global search query:', query)}
+                            onSignUp={() => openAuth('signup')}
+                            onLogIn={() => openAuth('login')}
+                            onLogOut={handleLogout}
+                            onOpenRateModal={() => console.log('Open Rate/Log Modal')}
+                        />
+
+                        {!currentUser ? (
+                            <LandingPage onOpenAuth={openAuth} />
+                        ) : (
+                            <Dashboard
+                                user={currentUser}
+                                onLogout={handleLogout}
+                                onOpenRateLogModal={() => console.log('Open Rate/Log Modal')}
+                            />
+                        )}
+
+                        <AuthModal
+                            isOpen={authModalOpen}
+                            initialMode={authMode}
+                            onClose={() => setAuthModalOpen(false)}
+                            onSuccess={(user) => {
+                                const validatedUser: User = {
+                                    nickname: user.nickname || 'David',
+                                    userEmail: user.userEmail || 'user@reelshare.com',
+                                };
+                                setCurrentUser(validatedUser);
+                                localStorage.setItem('currentUser', JSON.stringify(validatedUser));
+                            }}
+                        />
+                    </>
+                } />
+            </Routes>
+        </>
+    );
+}
