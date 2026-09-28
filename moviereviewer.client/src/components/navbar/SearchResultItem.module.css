@@ -1,0 +1,99 @@
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    list-style: none;
+}
+
+    .item:hover {
+        background-color: #f1f5f9;
+    }
+
+.posterWrapper {
+    width: 40px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.posterPlaceholder {
+    font-size: 1.1rem;
+    opacity: 0.6;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    gap: 0.2rem;
+}
+
+.titleRow {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+}
+
+.title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.year {
+    font-size: 0.8rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.movieBadge {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.seriesBadge {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.overview {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

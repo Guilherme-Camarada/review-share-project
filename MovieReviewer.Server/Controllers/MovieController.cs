@@ -57,5 +57,34 @@ namespace MovieReviewer.Server.Controllers
                 return new BadRequestObjectResult(new { error = ex.Message });
             }
         }
+
+        [HttpGet("movies/details/{id}")]
+        public async Task<IActionResult> GetMovieDetailsById(int id)
+        {
+            try
+            {
+                var movieDetails = await _movieService.GetMovieDetailsByIdAsync(id);
+                return new OkObjectResult(movieDetails);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new { error = ex.Message });
+            }
+
+        }
+
+        [HttpGet("series/details/{id}")]
+        public async Task<IActionResult> GetSeriesDetailsById(int id)
+        {
+            try
+            {
+                var seriesDetails = await _movieService.GetSeriesDetailsByIdAsync(id);
+                return new OkObjectResult(seriesDetails);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(new { error = ex.Message });
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MovieReviewer.Server.Services
 {
@@ -23,9 +24,14 @@ namespace MovieReviewer.Server.Services
                 throw new Exception($"Failed to fetch trending movies. Status: {response.StatusCode}");
             }
 
-            var movies = await response.Content.ReadFromJsonAsync<object>();
+            var movies = await response.Content.ReadFromJsonAsync<TmdbSearchResponse>();
 
-            return movies;
+            if (movies?.Results == null)
+            {
+                throw new Exception("No results found in the response.");
+            }
+
+            return movies.Results.ToList();
         }
 
         public async Task<object> GetTrendingSeriesAsync()
@@ -37,12 +43,17 @@ namespace MovieReviewer.Server.Services
                 throw new Exception($"Failed to fetch trending series. Status: {response.StatusCode}");
             }
 
-            var series = await response.Content.ReadFromJsonAsync<object>();
+            var series = await response.Content.ReadFromJsonAsync<TmdbSearchResponse>();
 
-            return series;
+            if (series?.Results == null)
+            {
+                throw new Exception("No results found in the response.");
+            }
+
+            return series.Results.ToList();
         }
 
-        public async Task<object> GetOnlyMediaByQueryAsync(string query, int page)
+        public async Task<object> GetOnlyMediaByQueryAsync(string query, int page = 1)
         {
             var encodedQuery = Uri.EscapeDataString(query);
             var response = await _httpClient.GetAsync($"https://api.themoviedb.org/3/search/multi?api_key={_apiKey}&query={encodedQuery}&page={page}");
@@ -64,9 +75,43 @@ namespace MovieReviewer.Server.Services
                 .ToList();
         }
 
+        public async Task<object> GetMovieDetailsByIdAsync(int movieId)
+        {
+            var response = await _httpClient.GetAsync($"https://api.themoviedb.org/3/movie/{movieId}?api_key={_apiKey}");
 
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to fetch movie details. Status: {response.StatusCode}");
+            }
 
+            var data = await response.Content.ReadFromJsonAsync<MovieDetails>();
 
+            if (data == null)
+            {
+                throw new Exception("No movie details found in the response.");
+            }
+
+            return data;
+        }
+
+        public async Task<object> GetSeriesDetailsByIdAsync(int seriesId)
+        {
+            var response = await _httpClient.GetAsync($"https://api.themoviedb.org/3/movie/{seriesId}?api_key={_apiKey}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Failed to fetch series details. Status: {response.StatusCode}");
+            }
+
+            var data = await response.Content.ReadFromJsonAsync<SeriesDetails>();
+
+            if (data == null)
+            {
+                throw new Exception("No series details found in the response.");
+            }
+
+            return data;
+        }
 
         public record TmdbSearchResponse
         {
@@ -110,10 +155,87 @@ namespace MovieReviewer.Server.Services
             public List<int> GenreIdList { get; init; } = new();
 
             [JsonPropertyName("release_date")]
-            public DateTime? ReleaseDate { get; init; }
+            public string? ReleaseDate { get; init; }
 
             [JsonPropertyName("first_air_date")]
-            public DateTime? FirstAirDate { get; init; }
+            public string? FirstAirDate { get; init; }
         }
+
+        public record MovieDetails
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("title")]
+            public string Title { get; set; } = string.Empty;
+
+            [JsonPropertyName("overview")]
+            public string Overview { get; set; } = string.Empty;
+
+            [JsonPropertyName("poster_path")]
+            public string? PosterPath { get; set; }
+
+            [JsonPropertyName("backdrop_path")]
+            public string? BackdropPath { get; set; }
+
+            [JsonPropertyName("release_date")]
+            public string? ReleaseDate { get; set; }
+
+            [JsonPropertyName("runtime")]
+            public int? Runtime { get; set; }
+
+            [JsonPropertyName("vote_average")]
+            public double VoteAverage { get; set; }
+
+            [JsonPropertyName("genres")]
+            public List<GenreDetails> Genres { get; set; } = new();
+        }
+
+        public class SeriesDetails
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string Name { get; set; } = string.Empty;
+
+            [JsonPropertyName("overview")]
+            public string Overview { get; set; } = string.Empty;
+
+            [JsonPropertyName("poster_path")]
+            public string? PosterPath { get; set; }
+
+            [JsonPropertyName("backdrop_path")]
+            public string? BackdropPath { get; set; }
+
+            [JsonPropertyName("first_air_date")]
+            public string? FirstAirDate { get; set; }
+
+            [JsonPropertyName("number_of_seasons")]
+            public int NumberOfSeasons { get; set; }
+
+            [JsonPropertyName("number_of_episodes")]
+            public int NumberOfEpisodes { get; set; }
+
+            [JsonPropertyName("episode_run_time")]
+            public List<int>? EpisodeRunTime { get; set; }
+
+            [JsonPropertyName("vote_average")]
+            public double VoteAverage { get; set; }
+
+            [JsonPropertyName("genres")]
+            public List<GenreDetails> Genres { get; set; } = new();
+        }
+
+        public record GenreDetails
+        {
+            [JsonPropertyName("id")]
+            public int Id { get; set; }
+
+            [JsonPropertyName("name")]
+            public string Name { get; set; } = string.Empty;
+        }
+
+
     }
 }
