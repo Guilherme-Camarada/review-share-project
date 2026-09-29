@@ -1,5 +1,5 @@
 ﻿import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams, Outlet } from 'react-router-dom';
 import { Navbar } from './components/navbar/Navbar';
 import { LandingPage } from './components/landing/LandingPage';
 import { Dashboard } from './components/dashboard/Dashboard';
@@ -7,10 +7,29 @@ import { AuthModal } from './components/auth/AuthModal';
 import { ConfirmEmail } from './components/auth/ConfirmEmail';
 import { ResetPassword } from './components/auth/ResetPassword';
 import { checkAuthStatus, logoutUser } from './api/authApi';
+import type { TmdbMediaItem } from './api/movieApi';
+import { MediaDetails } from './components/pages/MediaDetails';
 
 interface User {
     nickname: string;
     userEmail: string;
+}
+
+function MediaDetailsRoute({ mediaType }: { mediaType: 'movie' | 'series' }) {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+
+    if (!id) return null;
+
+    return (
+        <MediaDetails
+            key={`${mediaType}-${id}`}
+            id={parseInt(id, 10)}
+            mediaType={mediaType}
+            onBack={() => navigate(-1)}
+            onOpenRateModal={() => console.log('Open Rate/Log Modal')}
+        />
+    );
 }
 
 export default function App() {
@@ -68,41 +87,43 @@ export default function App() {
     if (isCheckingAuth) return null;
 
     return (
-        <>
-            <Routes>
-                {/* Confirm Email Route */}
-                <Route path="/confirm-email" element={<ConfirmEmail onUserLoggedIn={(userData) => {
-                    const validatedUser: User = {
-                        nickname: userData.nickname,
-                        userEmail: userData.userEmail,
-                    };
-                    setCurrentUser(validatedUser);
-                    localStorage.setItem('currentUser', JSON.stringify(validatedUser));
-                }} />} />
+        <Routes>
+            {/* Rotas de Autenticação isoladas (sem Navbar) */}
+            <Route
+                path="/confirm-email"
+                element={
+                    <ConfirmEmail
+                        onUserLoggedIn={(userData) => {
+                            const validatedUser: User = {
+                                nickname: userData.nickname,
+                                userEmail: userData.userEmail,
+                            };
+                            setCurrentUser(validatedUser);
+                            localStorage.setItem('currentUser', JSON.stringify(validatedUser));
+                        }}
+                    />
+                }
+            />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-                <Route path="/reset-password" element={<ResetPassword />} />
-
-                {/* Main App Routes */}
-                <Route path="/*" element={
+            {/* Layout Principal: Navbar e AuthModal partilhados entre as páginas */}
+            <Route
+                element={
                     <>
                         <Navbar
                             currentUser={currentUser}
-                            onSearch={(query) => console.log('Global search query:', query)}
+                            onSelectItem={(item: TmdbMediaItem) => {
+                                const isTv = item.media_type === 'tv' || (!item.title && !!item.name);
+                                navigate(isTv ? `/series/${item.id}` : `/movie/${item.id}`);
+                            }}
                             onSignUp={() => openAuth('signup')}
                             onLogIn={() => openAuth('login')}
                             onLogOut={handleLogout}
                             onOpenRateModal={() => console.log('Open Rate/Log Modal')}
                         />
 
-                        {!currentUser ? (
-                            <LandingPage onOpenAuth={openAuth} />
-                        ) : (
-                            <Dashboard
-                                user={currentUser}
-                                onLogout={handleLogout}
-                                onOpenRateLogModal={() => console.log('Open Rate/Log Modal')}
-                            />
-                        )}
+                        {/* O conteúdo da rota ativa é renderizado aqui */}
+                        <Outlet />
 
                         <AuthModal
                             isOpen={authModalOpen}
@@ -118,8 +139,29 @@ export default function App() {
                             }}
                         />
                     </>
-                } />
-            </Routes>
-        </>
+                }
+            >
+                {/* Página Inicial (Dashboard ou Landing) */}
+                <Route
+                    path="/"
+                    element={
+                        !currentUser ? (
+                            <LandingPage onOpenAuth={openAuth} />
+                        ) : (
+                            <Dashboard
+                                user={currentUser}
+                                onLogout={handleLogout}
+                                onOpenRateLogModal={() => console.log('Open Rate/Log Modal')}
+                            />
+                        )
+                    }
+                />
+
+                {/* Rotas para os Detalhes da Media */}
+                <Route path="/movie/:id" element={<MediaDetailsRoute mediaType="movie" />} />
+                <Route path="/series/:id" element={<MediaDetailsRoute mediaType="series" />} />
+                <Route path="/tv/:id" element={<MediaDetailsRoute mediaType="series" />} />
+            </Route>
+        </Routes>
     );
 }

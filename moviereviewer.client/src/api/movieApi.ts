@@ -102,7 +102,7 @@ export async function fetchMediaByQuery(query: string, page: number = 1): Promis
 }
 
 export async function fetchMovieDetails(movieId: number): Promise<MovieDetails> {
-    const response = await fetch(`api/Movie/movies/details/${movieId}`, {
+    const response = await fetch(`/api/Movie/movies/details/${movieId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
@@ -119,7 +119,7 @@ export async function fetchMovieDetails(movieId: number): Promise<MovieDetails> 
 }
 
 export async function fetchSeriesDetails(movieId: number): Promise<SeriesDetails> {
-    const response = await fetch(`api/Movie/series/details/${movieId}`, {
+    const response = await fetch(`/api/Movie/series/details/${movieId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'

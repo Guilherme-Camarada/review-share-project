@@ -1,0 +1,461 @@
+.pageWrapper {
+    min-height: calc(100vh - 75px);
+    background-color: #f7f4ee;
+    padding: 2rem 1.5rem;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ---------------- HERO BANNER ---------------- */
+.heroBanner {
+    position: relative;
+    width: 100%;
+    min-height: 480px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center top;
+    background-color: #2b2b2b;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    /* Gradiente escuro da esquerda para a direita para legibilidade do texto */
+    background: linear-gradient( 90deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.85) 40%, rgba(15, 23, 42, 0.4) 75%, rgba(15, 23, 42, 0.2) 100% );
+    display: flex;
+    align-items: center;
+    padding: 2.5rem;
+}
+
+.heroContent {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    width: 100%;
+    z-index: 2;
+}
+
+/* ---------------- POSTER ---------------- */
+.posterContainer {
+    width: 210px;
+    height: 315px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    background-color: #1e293b;
+}
+
+.posterImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.posterPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+/* ---------------- HERO MAIN ---------------- */
+.heroMain {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    max-width: 620px;
+}
+
+.titleArea {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mediaTitle {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.year {
+    font-weight: 400;
+    color: #e2e8f0;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    font-size: 0.95rem;
+    color: #cbd5e1;
+}
+
+.metaText {
+    font-weight: 500;
+}
+
+.genreGroup {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.genreBadge {
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+}
+
+.seriesGenres {
+    font-size: 0.88rem;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.ratingBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #facc15;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* ---------------- INTERACTIVE CARD ---------------- */
+.interactiveCard {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 480px;
+}
+
+.cardHeaderTitle {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Movie Status Pills */
+.statusPillsRow {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: #f1f5f9;
+    padding: 0.3rem;
+    border-radius: 10px;
+}
+
+.statusPill {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 0.4rem 0.5rem;
+    border-radius: 7px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.statusPillActive {
+    background-color: #bbf7d0; /* Tom verde suave da imagem */
+    color: #14532d;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Series Episode Controls */
+.episodeControlRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.watchedEpPill {
+    background-color: #dcfce7;
+    color: #166534;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    flex: 1;
+}
+
+.epAddBtn,
+.epEditBtn {
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+    .epAddBtn:hover,
+    .epEditBtn:hover {
+        background-color: #f8fafc;
+    }
+
+/* Rating & Review Button */
+.ratingSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.25rem;
+}
+
+.starsBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.ratingLabel {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.starRow {
+    display: flex;
+    gap: 0.15rem;
+}
+
+.star {
+    font-size: 1.35rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: color 0.1s ease;
+    user-select: none;
+}
+
+.starFilled {
+    color: #f59e0b; /* Amarelo dourado */
+}
+
+.logReviewBtn {
+    background-color: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.15rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+    .logReviewBtn:hover {
+        opacity: 0.9;
+    }
+
+/* ---------------- LOWER 3-COLUMN GRID ---------------- */
+.lowerGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.infoCard {
+    background-color: #ffffff;
+    border: 1px solid #e7e2d6;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.sectionHeading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 1rem 0;
+}
+
+.overviewText {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #475569;
+    margin: 0;
+}
+
+/* Cast Card */
+.castRow {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+
+.castMember {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
+}
+
+.castAvatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    overflow: hidden;
+}
+
+.castName {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1e293b;
+    max-width: 80px;
+    line-height: 1.2;
+}
+
+.castRole {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+/* Reviews Card */
+.reviewsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reviewItem {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.reviewAvatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.reviewBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.reviewHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.reviewUser {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.reviewRating {
+    font-size: 0.78rem;
+    color: #d97706;
+    font-weight: 700;
+}
+
+.reviewTime {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-left: auto;
+}
+
+.reviewText {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #475569;
+}
+
+/* Loading & Error States */
+.loadingContainer,
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+    color: #475569;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #0f172a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.errorMessage {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.backBtn {
+    background-color: #0f172a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+    .lowerGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .heroContent {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

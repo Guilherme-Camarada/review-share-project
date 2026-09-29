@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
 import { fetchMediaByQuery, type TmdbMediaItem } from '../../api/movieApi';
 import { SearchResultItem } from './SearchResultItem';
@@ -33,6 +34,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     const searchRef = useRef<HTMLDivElement>(null);
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const navigate = useNavigate();
+
+    const handleBrandClick = () => {
+        if (currentUser) {
+            setSearchQuery('');
+            setShowResults(false);
+            navigate('/');
+        }
+    };
 
     // Close results dropdown when clicking outside
     useEffect(() => {
@@ -113,7 +123,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     return (
         <header className={styles.header}>
             <div className={styles.container}>
-                <div className={styles.brand}>
+                <div className={styles.brand} onClick={handleBrandClick}>
                     <div className={styles.brandIcon}>P</div>
                     <span className={styles.brandText}>PostCredits</span>
                 </div>

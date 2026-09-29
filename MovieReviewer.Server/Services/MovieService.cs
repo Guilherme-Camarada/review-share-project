@@ -96,7 +96,7 @@ namespace MovieReviewer.Server.Services
 
         public async Task<object> GetSeriesDetailsByIdAsync(int seriesId)
         {
-            var response = await _httpClient.GetAsync($"https://api.themoviedb.org/3/movie/{seriesId}?api_key={_apiKey}");
+            var response = await _httpClient.GetAsync($"https://api.themoviedb.org/3/tv/{seriesId}?api_key={_apiKey}");
 
             if (!response.IsSuccessStatusCode)
             {
