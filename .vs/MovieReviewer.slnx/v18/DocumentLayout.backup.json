@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.client\\src\\components\\navbar\\navbar.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
-      "RelativeMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|solutionrelative:moviereviewer.client\\src\\components\\navbar\\navbar.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\mediadetails.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
       "RelativeMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|solutionrelative:moviereviewer.client\\src\\components\\pages\\mediadetails.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\mediadetails.module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|solutionrelative:moviereviewer.client\\src\\components\\pages\\mediadetails.module.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6FAA9D28-B347-CBF9-8A75-6217020039CE}|MovieReviewer.Server\\MovieReviewer.Server.csproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.server\\controllers\\useraccountscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6FAA9D28-B347-CBF9-8A75-6217020039CE}|MovieReviewer.Server\\MovieReviewer.Server.csproj|solutionrelative:moviereviewer.server\\controllers\\useraccountscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.client\\src\\components\\navbar\\navbar.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|solutionrelative:moviereviewer.client\\src\\components\\navbar\\navbar.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{69476544-7794-D688-02E8-9CE2B5680B6E}|moviereviewer.client\\moviereviewer.client.esproj|c:\\users\\35196\\desktop\\movieproject\\review-share-project\\moviereviewer.client\\src\\app.tsx||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
@@ -30,11 +38,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MediaDetails.module.css",
+              "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.module.css",
+              "RelativeDocumentMoniker": "moviereviewer.client\\src\\components\\pages\\MediaDetails.module.css",
+              "ToolTip": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.module.css",
+              "RelativeToolTip": "moviereviewer.client\\src\\components\\pages\\MediaDetails.module.css",
+              "ViewState": "AgIAAJ4CAAAAAAAAAAAYwKUCAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-11-03T15:04:49.39Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "MediaDetails.tsx",
+              "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
+              "RelativeDocumentMoniker": "moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
+              "ToolTip": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
+              "RelativeToolTip": "moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
+              "ViewState": "AgIAAFgBAAAAAAAAAAAawGEBAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2026-09-29T11:26:35.898Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserAccountsController.cs",
+              "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\Controllers\\UserAccountsController.cs",
+              "RelativeDocumentMoniker": "MovieReviewer.Server\\Controllers\\UserAccountsController.cs",
+              "ToolTip": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\Controllers\\UserAccountsController.cs",
+              "RelativeToolTip": "MovieReviewer.Server\\Controllers\\UserAccountsController.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAqwJ4AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-02T00:00:29.439Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Navbar.tsx",
               "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\navbar\\Navbar.tsx",
               "RelativeDocumentMoniker": "moviereviewer.client\\src\\components\\navbar\\Navbar.tsx",
@@ -42,29 +89,11 @@
               "RelativeToolTip": "moviereviewer.client\\src\\components\\navbar\\Navbar.tsx",
               "ViewState": "AgIAAHUAAAAAAAAAAAAcwIAAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-09-29T11:31:17.32Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+              "WhenOpened": "2026-09-29T11:31:17.32Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MediaDetails.tsx",
-              "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
-              "RelativeDocumentMoniker": "moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
-              "ToolTip": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
-              "RelativeToolTip": "moviereviewer.client\\src\\components\\pages\\MediaDetails.tsx",
-              "ViewState": "AgIAAEEAAAAAAAAAAAAAwIAAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-09-29T11:26:35.898Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "MovieService.cs",
               "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\Services\\MovieService.cs",
               "RelativeDocumentMoniker": "MovieReviewer.Server\\Services\\MovieService.cs",
@@ -72,12 +101,11 @@
               "RelativeToolTip": "MovieReviewer.Server\\Services\\MovieService.cs",
               "ViewState": "AgIAAFoAAAAAAAAAAAAnwGYAAABfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-29T11:23:09.795Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-29T11:23:09.795Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "movieApi.ts",
               "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\api\\movieApi.ts",
               "RelativeDocumentMoniker": "moviereviewer.client\\src\\api\\movieApi.ts",
@@ -85,12 +113,11 @@
               "RelativeToolTip": "moviereviewer.client\\src\\api\\movieApi.ts",
               "ViewState": "AgIAAFYAAAAAAAAAAAAgwHkAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-09-29T10:57:44.169Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-29T10:57:44.169Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "App.tsx",
               "DocumentMoniker": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\moviereviewer.client\\src\\App.tsx",
               "RelativeDocumentMoniker": "moviereviewer.client\\src\\App.tsx",
@@ -98,8 +125,7 @@
               "RelativeToolTip": "moviereviewer.client\\src\\App.tsx",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAB4AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
-              "WhenOpened": "2026-09-29T10:53:42.692Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-29T10:53:42.692Z"
             }
           ]
         }
