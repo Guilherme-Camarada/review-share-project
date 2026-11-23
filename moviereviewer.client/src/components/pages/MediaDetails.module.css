@@ -1,0 +1,695 @@
+.pageWrapper {
+    min-height: calc(100vh - 75px);
+    background-color: #f7f4ee;
+    padding: 2rem 1.5rem;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+
+
+
+/* ---------------- HERO BANNER ---------------- */
+.heroBanner {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center top;
+    background-color: #2b2b2b;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* 1. Pin the poster and title to the exact same top position for both movies and series */
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient( 90deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.88) 45%, rgba(15, 23, 42, 0.45) 80%, rgba(15, 23, 42, 0.25) 100% );
+    display: flex;
+    align-items: flex-start; /* Changed from center to align both layouts at the same top offset */
+    padding: 2.5rem;
+}
+
+.heroContent {
+    display: flex;
+    align-items: flex-start;
+    gap: 2.5rem;
+    width: 100%;
+    z-index: 2;
+}
+
+/* ---------------- POSTER ---------------- */
+.posterContainer {
+    width: 220px;
+    height: 330px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    background-color: #1e293b;
+}
+
+.posterImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.posterPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+}
+
+/* ---------------- HERO MAIN ---------------- */
+.heroMain {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+    max-width: 820px;
+}
+
+.titleArea {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.mediaTitle {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.year {
+    font-weight: 400;
+    color: #cbd5e1;
+}
+
+/* Duration on the left, Rating to the right */
+.metaRow {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.durationText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.ratingBadge {
+    display: inline-flex;
+    align-items: center;
+    color: #facc15;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* Highlighted Genre Pills */
+.genreGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.2rem;
+}
+
+.genreBadge {
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------------- INTERACTIVE CONTAINER (SPLIT BLOCKS) ---------------- */
+
+/* 3. Wrap watchlist card tightly in movies instead of stretching across the screen */
+.plannerCard {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 1.15rem 1.35rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    width: fit-content; /* Changed from flex: 1 to eliminate excessive horizontal white space */
+    max-width: 460px;
+}
+
+/* 4. Pack the rating and review button together without the vertical void */
+
+.cardHeaderTitle {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* --- WATCHLIST STATUS RECTANGLES (No outer box, distinct colors) --- */
+.statusPillsRow {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.statusPill {
+    border: 1px solid transparent;
+    padding: 0.45rem 0.95rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+}
+
+/* Plan to Watch (Blue) */
+.pillPlan {
+    background: rgba(59, 130, 246, 0.18);
+    color: #93c5fd;
+    border-color: rgba(96, 165, 250, 0.35);
+}
+
+    .pillPlan:hover {
+        background: rgba(59, 130, 246, 0.32);
+    }
+
+.pillPlanActive {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+/* Watching (Green) */
+.pillWatching {
+    background: rgba(34, 197, 94, 0.18);
+    color: #86efac;
+    border-color: rgba(74, 222, 128, 0.35);
+}
+
+    .pillWatching:hover {
+        background: rgba(34, 197, 94, 0.32);
+    }
+
+.pillWatchingActive {
+    background: #16a34a !important;
+    color: #ffffff !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+}
+
+/* Finished (Purple) */
+.pillFinished {
+    background: rgba(168, 85, 247, 0.18);
+    color: #d8b4fe;
+    border-color: rgba(192, 132, 252, 0.35);
+}
+
+    .pillFinished:hover {
+        background: rgba(168, 85, 247, 0.32);
+    }
+
+.pillFinishedActive {
+    background: #9333ea !important;
+    color: #ffffff !important;
+    border-color: #a855f7 !important;
+    box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35);
+}
+
+/* Dropped (Red) */
+.pillDropped {
+    background: rgba(239, 68, 68, 0.18);
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.35);
+}
+
+    .pillDropped:hover {
+        background: rgba(239, 68, 68, 0.32);
+    }
+
+.pillDroppedActive {
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+}
+
+/* Series Episode Tracker */
+.episodeTrackerBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.seasonTabs {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+}
+
+.seasonTab {
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #475569;
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+    .seasonTab:hover {
+        background: #e2e8f0;
+    }
+
+.seasonTabActive {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+.episodeGridWrapper {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.episodeGridHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #475569;
+}
+
+.watchedProgressText {
+    color: #15803d;
+}
+
+.episodeGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+    gap: 0.4rem;
+    max-height: 110px;
+    overflow-y: auto;
+    padding-right: 0.2rem;
+}
+
+.episodeBox {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+    .episodeBox:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+    }
+
+.episodeBoxWatched {
+    background-color: #bbf7d0;
+    color: #14532d;
+    border-color: #86efac;
+}
+
+/* --- MOVIE REVIEW CARD (Stacked below rectangles) --- */
+.movieReviewerCard {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: 420px;
+    max-width: 100%;
+    margin-top: 0.4rem;
+}
+
+/* --- SERIES INTERACTIVE CONTAINER --- */
+.seriesInteractiveContainer {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.seriesEpisodeCard {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    flex: 1;
+    min-width: 300px;
+}
+
+.seriesReviewerCard {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.16);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    width: 260px;
+    flex-shrink: 0;
+}
+
+/* --- COMMON REVIEW INPUTS & HEADERS --- */
+.reviewHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviewTextarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0.5rem 0.65rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    color: #1e293b;
+    resize: none;
+    outline: none;
+    background: #f8fafc;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+    .reviewTextarea:focus {
+        border-color: #0f172a;
+        background: #ffffff;
+    }
+
+/* Reviewer Stars and Button */
+.starsBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ratingLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.starRow {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.starContainer {
+    position: relative;
+    display: inline-flex;
+    font-size: 1.35rem;
+    line-height: 1;
+    user-select: none;
+}
+
+.starBase {
+    display: block;
+    color: #cbd5e1;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.starFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    color: #f59e0b;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.starHalfLeft {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.starHalfRight {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+
+
+.logReviewBtn {
+    background-color: #0f172a;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    width: 100%;
+}
+
+    .logReviewBtn:hover {
+        opacity: 0.9;
+    }
+
+/* ---------------- LOWER 3-COLUMN GRID ---------------- */
+.lowerGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.infoCard {
+    background-color: #ffffff;
+    border: 1px solid #e7e2d6;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.sectionHeading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 1rem 0;
+}
+
+.overviewText {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #475569;
+    margin: 0;
+}
+
+/* Cast Card */
+.castRow {
+    display: flex;
+    justify-content: space-around;
+    gap: 0.5rem;
+}
+
+.castMember {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.35rem;
+}
+
+.castAvatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    overflow: hidden;
+}
+
+.castName {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1e293b;
+    max-width: 80px;
+    line-height: 1.2;
+}
+
+.castRole {
+    font-size: 0.72rem;
+    color: #64748b;
+}
+
+/* Reviews Card */
+.reviewsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reviewItem {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.reviewAvatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.reviewBody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.reviewHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+}
+
+.reviewUser {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.reviewRating {
+    font-size: 0.78rem;
+    color: #d97706;
+    font-weight: 700;
+}
+
+.reviewTime {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-left: auto;
+}
+
+.reviewText {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: #475569;
+}
+
+/* Loading & Error States */
+.loadingContainer,
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    gap: 1rem;
+    color: #475569;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #0f172a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.errorMessage {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.backBtn {
+    background-color: #0f172a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 960px) {
+
+    .lowerGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .heroContent {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
