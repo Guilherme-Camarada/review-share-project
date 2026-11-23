@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj": {}
+    "C:\\Users\\lasts\\Documents\\GitHub\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj": {
+    "C:\\Users\\lasts\\Documents\\GitHub\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj",
+        "projectUniqueName": "C:\\Users\\lasts\\Documents\\GitHub\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj",
         "projectName": "MovieReviewer.Server",
-        "projectPath": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj",
-        "packagesPath": "C:\\Users\\35196\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\35196\\Desktop\\MovieProject\\review-share-project\\MovieReviewer.Server\\obj\\",
+        "projectPath": "C:\\Users\\lasts\\Documents\\GitHub\\review-share-project\\MovieReviewer.Server\\MovieReviewer.Server.csproj",
+        "packagesPath": "C:\\Users\\lasts\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\lasts\\Documents\\GitHub\\review-share-project\\MovieReviewer.Server\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\35196\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\lasts\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -46,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.400"
+        "SdkAnalysisLevel": "11.0.100"
       },
       "frameworks": {
         "net10.0": {
@@ -109,7 +108,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\11.0.100/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
