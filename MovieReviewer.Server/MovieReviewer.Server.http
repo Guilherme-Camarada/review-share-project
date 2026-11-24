@@ -1,6 +1,11 @@
 @MovieReviewer.Server_HostAddress = http://localhost:5076
 
-GET {{MovieReviewer.Server_HostAddress}}/weatherforecast/
+GET {{MovieReviewer.Server_HostAddress}}/api/media/trending/movie
+Accept: application/json
+
+###
+
+GET {{MovieReviewer.Server_HostAddress}}/api/media/tv/106379
 Accept: application/json
 
 ###

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime;
 
 namespace MovieReviewer.Server.Models
 {
@@ -9,7 +8,11 @@ namespace MovieReviewer.Server.Models
         [PersonalData]
         [Required]
         [Display(Name = "Nickname")]
-        public string Nickname { get; set; }
+        public string Nickname { get; set; } = string.Empty;
+
         public DateTime RegistrationDate { get; set; }
+
+        /// <summary>True for the fake users created by DevDataSeeder.</summary>
+        public bool IsMock { get; set; }
     }
 }

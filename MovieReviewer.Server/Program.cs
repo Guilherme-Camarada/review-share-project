@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieReviewer.Server.Data;
@@ -27,8 +29,8 @@ builder.Services.AddIdentityCore<User>(options =>
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequireUppercase = true;
     options.User.RequireUniqueEmail = true;
-}).
-AddEntityFrameworkStores<MovieReviewerDbContext>()
+})
+.AddEntityFrameworkStores<MovieReviewerDbContext>()
 .AddSignInManager<SignInManager<User>>()
 .AddDefaultTokenProviders();
 
@@ -57,18 +59,22 @@ if (!string.IsNullOrEmpty(port))
     builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 }
 
-builder.Services.AddHttpClient<MovieService>();
-builder.Services.AddControllers();
+builder.Services.AddHttpClient<TmdbService>(client => client.BaseAddress = new Uri(TmdbService.BaseUrl));
+builder.Services.AddScoped<LibraryService>();
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
+
+// Enums go over the wire as camelCase strings ("movie", "planToWatch").
+builder.Services.AddControllers().AddJsonOptions(options =>
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
+builder.Services.AddProblemDetails();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("https://localhost:53896", "http://localhost:5173", "http://localhost:3000")
+        policy.WithOrigins(builder.Configuration["Frontend:BaseUrl"]!, "http://localhost:5173", "http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -85,6 +91,19 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "MovieReviewer API v1");
         options.RoutePrefix = "swagger";
     });
+
+    try
+    {
+        await DevDataSeeder.SeedAsync(app.Services);
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "Seeding development data failed.");
+    }
+}
+else
+{
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();
