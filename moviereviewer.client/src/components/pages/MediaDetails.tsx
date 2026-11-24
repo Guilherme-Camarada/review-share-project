@@ -1,111 +1,56 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { useState } from 'react';
 import styles from './MediaDetails.module.css';
 import {
     fetchMovieDetails,
     fetchSeriesDetails,
+    tmdbImage,
+    type MediaType,
     type MovieDetails,
-    type SeriesDetails
-} from '../../api/movieApi';
+    type SeriesDetails,
+} from '../../api/mediaApi';
+import {
+    fetchEntry,
+    saveEntry,
+    setSeasonProgress,
+    WATCH_STATUSES,
+    type LibraryEntry,
+    type WatchStatus,
+} from '../../api/libraryApi';
+import { fetchFriendReviews } from '../../api/friendsApi';
+import { useLoad } from '../../utils/useLoad';
+import { timeAgo } from '../../utils/time';
+import { StarRating } from '../common/StarRating';
+import { Avatar } from '../common/Avatar';
+import { EpisodeTracker } from './EpisodeTracker';
 
 interface MediaDetailsProps {
     id: number;
-    mediaType: 'movie' | 'tv' | 'series';
-    onBack?: () => void;
-    onOpenRateModal?: () => void;
+    mediaType: MediaType;
+    onBack: () => void;
 }
 
-export const MediaDetails: React.FC<MediaDetailsProps> = ({
-    id,
-    mediaType,
-    onBack,
-    onOpenRateModal
-}) => {
-    const isMovie = mediaType === 'movie';
+type Details = { kind: 'movie'; data: MovieDetails } | { kind: 'tv'; data: SeriesDetails };
 
-    const [movieData, setMovieData] = useState<MovieDetails | null>(null);
-    const [seriesData, setSeriesData] = useState<SeriesDetails | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+const STATUS_STYLES: Record<WatchStatus, { pill: string; active: string }> = {
+    planToWatch: { pill: styles.pillPlan, active: styles.pillPlanActive },
+    watching: { pill: styles.pillWatching, active: styles.pillWatchingActive },
+    finished: { pill: styles.pillFinished, active: styles.pillFinishedActive },
+    dropped: { pill: styles.pillDropped, active: styles.pillDroppedActive },
+};
 
-    // Watchlist & Rating state
-    const [watchStatus, setWatchStatus] = useState<'plan' | 'watching' | 'finished' | 'dropped' | null>('watching');
-    const [userRating, setUserRating] = useState<number>(4);
-    const [hoverRating, setHoverRating] = useState<number>(0);
-    const [reviewText, setReviewText] = useState<string>('');
+export function MediaDetails({ id, mediaType, onBack }: MediaDetailsProps) {
+    const details = useLoad<Details>(async () =>
+        mediaType === 'movie'
+            ? { kind: 'movie', data: await fetchMovieDetails(id) }
+            : { kind: 'tv', data: await fetchSeriesDetails(id) },
+    [id, mediaType]);
+    const entry = useLoad(() => fetchEntry(mediaType, id), [id, mediaType]);
+    const friendReviews = useLoad(() => fetchFriendReviews(mediaType, id), [id, mediaType]);
 
-    // Series Seasons & Episode tracking state
-    const [selectedSeason, setSelectedSeason] = useState<number>(1);
-    const [watchedBySeason, setWatchedBySeason] = useState<Record<number, number>>({ 1: 4 });
+    const [saving, setSaving] = useState(false);
+    const [saveMessage, setSaveMessage] = useState<SaveMessage | null>(null);
 
-    useEffect(() => {
-        let isMounted = true;
-        setLoading(true);
-        setError(null);
-        setMovieData(null);
-        setSeriesData(null);
-
-        const loadMedia = async () => {
-            try {
-                if (isMovie) {
-                    const data = await fetchMovieDetails(id);
-                    if (isMounted) setMovieData(data);
-                } else {
-                    const data = await fetchSeriesDetails(id);
-                    if (isMounted) setSeriesData(data);
-                }
-            } catch (err: any) {
-                if (isMounted) setError(err.message || 'Error loading details.');
-            } finally {
-                if (isMounted) setLoading(false);
-            }
-        };
-
-        loadMedia();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [id, isMovie]);
-
-    const seasonsList = useMemo(() => {
-        if (!seriesData) return [];
-
-        const rawSeasons = (seriesData as any).seasons;
-        if (Array.isArray(rawSeasons) && rawSeasons.length > 0) {
-            const filtered = rawSeasons.filter((s: any) => s.season_number > 0);
-            if (filtered.length > 0) {
-                return filtered.map((s: any) => ({
-                    season_number: s.season_number,
-                    name: s.name || `Season ${s.season_number}`,
-                    episode_count: s.episode_count || 10
-                }));
-            }
-        }
-
-        const count = seriesData.number_of_seasons || 1;
-        const totalEps = seriesData.number_of_episodes || 10;
-        const avgPerSeason = Math.max(1, Math.round(totalEps / count));
-
-        return Array.from({ length: count }, (_, i) => ({
-            season_number: i + 1,
-            name: `Season ${i + 1}`,
-            episode_count: avgPerSeason
-        }));
-    }, [seriesData]);
-
-    const activeSeason = useMemo(() => {
-        return seasonsList.find((s) => s.season_number === selectedSeason) || seasonsList[0];
-    }, [seasonsList, selectedSeason]);
-
-    const handleEpisodeClick = (seasonNum: number, epNum: number) => {
-        setWatchedBySeason((prev) => {
-            const current = prev[seasonNum] || 0;
-            const updated = current === epNum ? epNum - 1 : epNum;
-            return { ...prev, [seasonNum]: updated };
-        });
-    };
-
-    if (loading) {
+    if (details.loading) {
         return (
             <div className={styles.loadingContainer}>
                 <div className={styles.spinner}></div>
@@ -114,104 +59,75 @@ export const MediaDetails: React.FC<MediaDetailsProps> = ({
         );
     }
 
-    const hasData = isMovie ? Boolean(movieData) : Boolean(seriesData);
-
-    if (error || !hasData) {
+    if (details.error || !details.data) {
         return (
             <div className={styles.errorContainer}>
-                <p className={styles.errorMessage}>{error || 'Content not found.'}</p>
-                {onBack && (
-                    <button className={styles.backBtn} onClick={onBack}>
-                        Go back
-                    </button>
-                )}
+                <p className={styles.errorMessage}>{details.error || 'Content not found.'}</p>
+                <button className={styles.backBtn} onClick={onBack}>Go back</button>
             </div>
         );
     }
 
-    const title = isMovie ? movieData!.title : seriesData!.name;
-    const rawDate = isMovie ? movieData!.release_date : seriesData!.first_air_date;
-    const year = rawDate ? rawDate.substring(0, 4) : '';
-    const overview = isMovie ? movieData!.overview : seriesData!.overview;
-    const genres = isMovie ? movieData!.genres : seriesData!.genres;
-    const voteAverage = isMovie ? movieData!.vote_average : seriesData!.vote_average;
-    const ratingOutOfFive = (voteAverage / 2).toFixed(1);
+    const saved = entry.data;
 
-    const posterPath = isMovie ? movieData!.poster_path : seriesData!.poster_path;
-    const backdropPath = isMovie ? movieData!.backdrop_path : seriesData!.backdrop_path;
-
-    const posterUrl = posterPath ? `https://image.tmdb.org/t/p/w500${posterPath}` : null;
-    const backdropUrl = backdropPath ? `https://image.tmdb.org/t/p/original${backdropPath}` : null;
-
-    const formatRuntime = (minutes: number | null) => {
-        if (!minutes) return null;
-        const hrs = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        return `${hrs}h ${mins < 10 ? '0' : ''}${mins}m`;
+    const persist = async (request: () => Promise<LibraryEntry | null>, successText?: string) => {
+        setSaving(true);
+        setSaveMessage(null);
+        try {
+            entry.setData(await request());
+            if (successText) setSaveMessage({ text: successText, isError: false });
+        } catch (err) {
+            setSaveMessage({ text: (err as Error).message, isError: true });
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const renderStarRating = () => {
-        const activeRating = hoverRating > 0 ? hoverRating : userRating;
+    const handleStatus = (status: WatchStatus) =>
+        persist(() => saveEntry(mediaType, id, {
+            status: saved?.status === status ? null : status,
+            rating: saved?.rating ?? null,
+            review: saved?.review ?? null,
+        }));
 
-        return (
-            <div className={styles.starRow} onMouseLeave={() => setHoverRating(0)}>
-                {[1, 2, 3, 4, 5].map((star) => {
-                    const fillWidth =
-                        activeRating >= star
-                            ? '100%'
-                            : activeRating >= star - 0.5
-                                ? '50%'
-                                : '0%';
+    const handleLogReview = (rating: number | null, review: string | null) =>
+        persist(() => saveEntry(mediaType, id, {
+            status: saved?.status ?? (mediaType === 'movie' ? 'finished' : 'watching'),
+            rating,
+            review,
+        }), 'Saved!');
 
-                    return (
-                        <div key={star} className={styles.starContainer}>
-                            <span className={styles.starBase}>★</span>
-                            <span
-                                className={styles.starFill}
-                                style={{ width: fillWidth }}
-                            >
-                                ★
-                            </span>
+    const handleEpisodes = (seasonNumber: number, episodesWatched: number) =>
+        persist(() => setSeasonProgress(id, seasonNumber, episodesWatched));
 
-                            {/* Left half hitbox (star - 0.5) */}
-                            <div
-                                className={styles.starHalfLeft}
-                                onMouseEnter={() => setHoverRating(star - 0.5)}
-                                onClick={() =>
-                                    setUserRating((prev) => (prev === star - 0.5 ? 0 : star - 0.5))
-                                }
-                                title={`${star - 0.5} stars`}
-                            />
-
-                            {/* Right half hitbox (star) */}
-                            <div
-                                className={styles.starHalfRight}
-                                onMouseEnter={() => setHoverRating(star)}
-                                onClick={() =>
-                                    setUserRating((prev) => (prev === star ? 0 : star))
-                                }
-                                title={`${star} stars`}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-        );
-    };
+    const { kind, data } = details.data;
+    const title = kind === 'movie' ? data.title : data.name;
+    const year = (kind === 'movie' ? data.releaseDate : data.firstAirDate)?.substring(0, 4);
+    const posterUrl = tmdbImage(data.posterPath, 'w500');
+    const backdropUrl = tmdbImage(data.backdropPath, 'original');
+    // Keyed on the saved values so the form starts over from them after loading or saving.
+    const reviewCard = (
+        <ReviewCard
+            key={`${entry.loading}|${saved?.rating}|${saved?.review}`}
+            compact={kind === 'movie'}
+            savedRating={saved?.rating ?? null}
+            savedReview={saved?.review ?? ''}
+            disabled={saving || entry.loading}
+            saving={saving}
+            message={saveMessage}
+            onSave={handleLogReview}
+        />
+    );
 
     return (
         <main className={styles.pageWrapper}>
             <div className={styles.container}>
-                {/* HERO BANNER */}
                 <section
                     className={styles.heroBanner}
-                    style={{
-                        backgroundImage: backdropUrl ? `url(${backdropUrl})` : 'none',
-                    }}
+                    style={{ backgroundImage: backdropUrl ? `url(${backdropUrl})` : 'none' }}
                 >
                     <div className={styles.heroOverlay}>
                         <div className={styles.heroContent}>
-                            {/* Poster */}
                             <div className={styles.posterContainer}>
                                 {posterUrl ? (
                                     <img src={posterUrl} alt={title} className={styles.posterImage} />
@@ -220,156 +136,56 @@ export const MediaDetails: React.FC<MediaDetailsProps> = ({
                                 )}
                             </div>
 
-                            {/* Main Info */}
                             <div className={styles.heroMain}>
                                 <div className={styles.titleArea}>
-                                    {/* 1. Title */}
                                     <h1 className={styles.mediaTitle}>
                                         {title} {year && <span className={styles.year}>({year})</span>}
                                     </h1>
 
-                                    {/* 2. Duration & Rating */}
                                     <div className={styles.metaRow}>
                                         <span className={styles.durationText}>
-                                            {isMovie
-                                                ? formatRuntime(movieData?.runtime ?? null) || 'N/A'
-                                                : `${seriesData?.number_of_seasons} ${seriesData?.number_of_seasons === 1 ? 'Season' : 'Seasons'
-                                                } · ${seriesData?.number_of_episodes} Episodes`}
+                                            {kind === 'movie'
+                                                ? formatRuntime(data.runtime)
+                                                : `${data.seasons.length} ${data.seasons.length === 1 ? 'Season' : 'Seasons'} · ${data.seasons.reduce((sum, s) => sum + s.episodeCount, 0)} Episodes`}
                                         </span>
-                                        <span className={styles.ratingBadge}>
-                                            ★ {ratingOutOfFive}/5
-                                        </span>
+                                        <span className={styles.ratingBadge}>★ {(data.voteAverage / 2).toFixed(1)}/5</span>
                                     </div>
 
-                                    {/* 3. Highlighted Genre Badges */}
                                     <div className={styles.genreGroup}>
-                                        {genres.map((g) => (
-                                            <span key={g.id} className={styles.genreBadge}>
-                                                {g.name}
-                                            </span>
+                                        {data.genres.map((g) => (
+                                            <span key={g.id} className={styles.genreBadge}>{g.name}</span>
                                         ))}
                                     </div>
 
-                                    {/* 4. Watchlist Rectangles (No outer box) */}
                                     <div className={styles.statusPillsRow}>
-                                        {[
-                                            { key: 'plan', label: 'Plan to Watch', pillClass: styles.pillPlan, activeClass: styles.pillPlanActive },
-                                            { key: 'watching', label: 'Watching', pillClass: styles.pillWatching, activeClass: styles.pillWatchingActive },
-                                            { key: 'finished', label: 'Finished', pillClass: styles.pillFinished, activeClass: styles.pillFinishedActive },
-                                            { key: 'dropped', label: 'Dropped', pillClass: styles.pillDropped, activeClass: styles.pillDroppedActive },
-                                        ].map((item) => (
+                                        {WATCH_STATUSES.map(({ value, label }) => (
                                             <button
-                                                key={item.key}
+                                                key={value}
                                                 type="button"
-                                                className={`${styles.statusPill} ${item.pillClass} ${watchStatus === item.key ? item.activeClass : ''
-                                                    }`}
-                                                onClick={() => setWatchStatus((prev) => (prev === item.key ? null : (item.key as any)))}
+                                                disabled={saving || entry.loading}
+                                                aria-pressed={saved?.status === value}
+                                                className={`${styles.statusPill} ${STATUS_STYLES[value].pill} ${saved?.status === value ? STATUS_STYLES[value].active : ''}`}
+                                                onClick={() => handleStatus(value)}
                                             >
-                                                {item.label}
+                                                {label}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
 
-                                {/* 5. Interactive Cards */}
-                                {isMovie ? (
-                                    /* FOR MOVIES: Review block directly underneath watchlist rectangles */
-                                    <div className={styles.movieReviewerCard}>
-                                        <div className={styles.reviewHeaderRow}>
-                                            <span className={styles.cardHeaderTitle}>Rating & Review</span>
-                                            {renderStarRating()}
-                                        </div>
-
-                                        <textarea
-                                            className={styles.reviewTextarea}
-                                            placeholder="Write your review or notes..."
-                                            value={reviewText}
-                                            onChange={(e) => setReviewText(e.target.value)}
-                                            rows={2}
-                                        />
-
-                                        <button
-                                            type="button"
-                                            className={styles.logReviewBtn}
-                                            onClick={onOpenRateModal}
-                                        >
-                                            Log Review
-                                        </button>
-                                    </div>
+                                {kind === 'movie' ? (
+                                    reviewCard
                                 ) : (
-                                    /* FOR SERIES: Episode Tracker on the left, Review Box to the right */
                                     <div className={styles.seriesInteractiveContainer}>
-                                        {activeSeason && (
-                                            <div className={styles.seriesEpisodeCard}>
-                                                <div className={styles.seasonTabs}>
-                                                    {seasonsList.map((season) => (
-                                                        <button
-                                                            key={season.season_number}
-                                                            type="button"
-                                                            className={`${styles.seasonTab} ${selectedSeason === season.season_number
-                                                                    ? styles.seasonTabActive
-                                                                    : ''
-                                                                }`}
-                                                            onClick={() => setSelectedSeason(season.season_number)}
-                                                        >
-                                                            {season.name}
-                                                        </button>
-                                                    ))}
-                                                </div>
-
-                                                <div className={styles.episodeGridWrapper}>
-                                                    <div className={styles.episodeGridHeader}>
-                                                        <span>Episodes</span>
-                                                        <span className={styles.watchedProgressText}>
-                                                            {watchedBySeason[selectedSeason] || 0} / {activeSeason.episode_count} watched
-                                                        </span>
-                                                    </div>
-
-                                                    <div className={styles.episodeGrid}>
-                                                        {Array.from({ length: activeSeason.episode_count }, (_, i) => {
-                                                            const epNum = i + 1;
-                                                            const isWatched = (watchedBySeason[selectedSeason] || 0) >= epNum;
-
-                                                            return (
-                                                                <button
-                                                                    key={epNum}
-                                                                    type="button"
-                                                                    className={`${styles.episodeBox} ${isWatched ? styles.episodeBoxWatched : ''
-                                                                        }`}
-                                                                    onClick={() => handleEpisodeClick(selectedSeason, epNum)}
-                                                                    title={`Episode ${epNum} ${isWatched ? '(Watched)' : ''}`}
-                                                                >
-                                                                    {epNum}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div className={styles.seriesReviewerCard}>
-                                            <div className={styles.reviewHeaderRow}>
-                                                <span className={styles.cardHeaderTitle}>Rating & Review</span>
-                                                 {renderStarRating()}
-                                            </div>
-
-                                            <textarea
-                                                className={styles.reviewTextarea}
-                                                placeholder="Write your review or notes..."
-                                                value={reviewText}
-                                                onChange={(e) => setReviewText(e.target.value)}
-                                                rows={3}
+                                        {!entry.loading && (
+                                            <EpisodeTracker
+                                                seasons={data.seasons}
+                                                watched={saved?.seasons ?? {}}
+                                                onChange={handleEpisodes}
+                                                disabled={saving}
                                             />
-
-                                            <button
-                                                type="button"
-                                                className={styles.logReviewBtn}
-                                                onClick={onOpenRateModal}
-                                            >
-                                                Log Review
-                                            </button>
-                                        </div>
+                                        )}
+                                        {reviewCard}
                                     </div>
                                 )}
                             </div>
@@ -377,72 +193,95 @@ export const MediaDetails: React.FC<MediaDetailsProps> = ({
                     </div>
                 </section>
 
-                {/* LOWER 3-COLUMN GRID */}
                 <section className={styles.lowerGrid}>
                     <div className={styles.infoCard}>
                         <h2 className={styles.sectionHeading}>Synopsis</h2>
-                        <p className={styles.overviewText}>
-                            {overview || 'No synopsis available for this title.'}
-                        </p>
+                        <p className={styles.overviewText}>{data.overview || 'No synopsis available for this title.'}</p>
                     </div>
 
                     <div className={styles.infoCard}>
-                        <h2 className={styles.sectionHeading}>
-                            {isMovie ? 'Cast & Crew' : 'Cast & Creators'}
-                        </h2>
-                        <div className={styles.castRow}>
-                            <div className={styles.castMember}>
-                                <div className={styles.castAvatar}>👤</div>
-                                <span className={styles.castName}>Main Actor</span>
-                                <span className={styles.castRole}>Character</span>
-                            </div>
-                            <div className={styles.castMember}>
-                                <div className={styles.castAvatar}>👤</div>
-                                <span className={styles.castName}>Co-Star</span>
-                                <span className={styles.castRole}>Character</span>
-                            </div>
-                            <div className={styles.castMember}>
-                                <div className={styles.castAvatar}>🎬</div>
-                                <span className={styles.castName}>Lead Director</span>
-                                <span className={styles.castRole}>{isMovie ? 'Director' : 'Showrunner'}</span>
-                            </div>
-                        </div>
+                        <h2 className={styles.sectionHeading}>{kind === 'movie' ? 'Cast & Crew' : 'Cast & Creators'}</h2>
+                        <p className={styles.overviewText}>Cast information is coming soon.</p>
                     </div>
 
                     <div className={styles.infoCard}>
                         <h2 className={styles.sectionHeading}>Friend Reviews</h2>
-                        <div className={styles.reviewsList}>
-                            <div className={styles.reviewItem}>
-                                <div className={styles.reviewAvatar}>👩</div>
-                                <div className={styles.reviewBody}>
-                                    <div className={styles.reviewHeader}>
-                                        <span className={styles.reviewUser}>@sarah_k</span>
-                                        <span className={styles.reviewRating}>★ 4.5/5</span>
-                                        <span className={styles.reviewTime}>2h ago</span>
+                        {friendReviews.loading ? (
+                            <p className={styles.overviewText}>Loading…</p>
+                        ) : !friendReviews.data?.length ? (
+                            <p className={styles.overviewText}>None of your friends have reviewed this yet.</p>
+                        ) : (
+                            <div className={styles.reviewsList}>
+                                {friendReviews.data.map((review) => (
+                                    <div key={review.user.id} className={styles.reviewItem}>
+                                        <Avatar name={review.user.nickname} />
+                                        <div className={styles.reviewBody}>
+                                            <div className={styles.reviewHeader}>
+                                                <span className={styles.reviewUser}>{review.user.nickname}</span>
+                                                {review.rating !== null && (
+                                                    <span className={styles.reviewRating}>★ {review.rating}/5</span>
+                                                )}
+                                                <span className={styles.reviewTime}>{timeAgo(review.reviewedAt)}</span>
+                                            </div>
+                                            {review.review && <p className={styles.reviewText}>{review.review}</p>}
+                                        </div>
                                     </div>
-                                    <p className={styles.reviewText}>
-                                        Visually breathtaking. A true cinematic masterpiece!
-                                    </p>
-                                </div>
+                                ))}
                             </div>
-
-                            <div className={styles.reviewItem}>
-                                <div className={styles.reviewAvatar}>👨</div>
-                                <div className={styles.reviewBody}>
-                                    <div className={styles.reviewHeader}>
-                                        <span className={styles.reviewUser}>@alex_v</span>
-                                        <span className={styles.reviewRating}>★ 4.5/5</span>
-                                        <span className={styles.reviewTime}>5h ago</span>
-                                    </div>
-                                    <p className={styles.reviewText}>
-                                        The scale is immense. Best release of the year.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </section>
             </div>
         </main>
     );
-};
+}
+
+type SaveMessage = { text: string; isError: boolean };
+
+interface ReviewCardProps {
+    compact: boolean;
+    savedRating: number | null;
+    savedReview: string;
+    disabled: boolean;
+    saving: boolean;
+    message: SaveMessage | null;
+    onSave: (rating: number | null, review: string | null) => void;
+}
+
+function ReviewCard({ compact, savedRating, savedReview, disabled, saving, message, onSave }: ReviewCardProps) {
+    const [rating, setRating] = useState(savedRating);
+    const [text, setText] = useState(savedReview);
+    const dirty = rating !== savedRating || text.trim() !== savedReview;
+
+    return (
+        <div className={compact ? styles.movieReviewerCard : styles.seriesReviewerCard}>
+            <div className={styles.reviewHeaderRow}>
+                <span className={styles.cardHeaderTitle}>Rating & Review</span>
+                <StarRating value={rating} onChange={setRating} size={22} />
+            </div>
+            <textarea
+                className={styles.reviewTextarea}
+                placeholder="Write your review or notes..."
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                rows={compact ? 2 : 3}
+                maxLength={5000}
+            />
+            <button
+                type="button"
+                className={styles.logReviewBtn}
+                onClick={() => onSave(rating, text.trim() || null)}
+                disabled={disabled || !dirty}
+            >
+                {saving ? 'Saving…' : 'Log Review'}
+            </button>
+            {message && <p className={message.isError ? styles.saveError : styles.saveOk}>{message.text}</p>}
+        </div>
+    );
+}
+
+function formatRuntime(minutes: number | null) {
+    if (!minutes) return 'Runtime unknown';
+    const mins = minutes % 60;
+    return `${Math.floor(minutes / 60)}h ${mins < 10 ? '0' : ''}${mins}m`;
+}

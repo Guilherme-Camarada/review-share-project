@@ -1,0 +1,28 @@
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.planToWatch {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.watching {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.finished {
+    background-color: #f3e8ff;
+    color: #7e22ce;
+}
+
+.dropped {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
