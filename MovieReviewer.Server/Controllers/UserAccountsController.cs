@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MovieReviewer.Server.Models;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using MovieReviewer.Server.Services;
 using System.Net;
 
@@ -17,8 +16,11 @@ namespace MovieReviewer.Server.Controllers
         private readonly SignInManager<User> _signInManager;
         private readonly IEmailSenderService _emailSender;
 
-        public UserAccountsController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSenderService emailSender)
+        private readonly string _frontendUrl;
+
+        public UserAccountsController(UserManager<User> userManager, SignInManager<User> signInManager, IEmailSenderService emailSender, IConfiguration configuration)
         {
+            _frontendUrl = configuration["Frontend:BaseUrl"] ?? throw new InvalidOperationException("Frontend:BaseUrl is missing from configuration.");
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -82,10 +84,7 @@ namespace MovieReviewer.Server.Controllers
 
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var encodedToken = WebUtility.UrlEncode(token);
-
-                // Use correct frontend URL - running on https://localhost:53896
-                var frontendUrl = "https://localhost:53896";
-                var confirmationLink = $"{frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
+                var confirmationLink = $"{_frontendUrl}/confirm-email?userId={user.Id}&token={encodedToken}";
 
                 var emailBody = $@"
                 <h2>Welcome to PostCredits, {user.Nickname}!</h2>
@@ -215,7 +214,7 @@ namespace MovieReviewer.Server.Controllers
                 var token = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var encodedToken = WebUtility.UrlEncode(token);
 
-                var resetLink = $"https://localhost:53896/reset-password?token={encodedToken}&email={WebUtility.UrlEncode(user.Email)}";
+                var resetLink = $"{_frontendUrl}/reset-password?token={encodedToken}&email={WebUtility.UrlEncode(user.Email)}";
 
                 var emailBody = $@"
                     <h2>Password Reset Request</h2>

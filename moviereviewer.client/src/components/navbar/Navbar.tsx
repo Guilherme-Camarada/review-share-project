@@ -1,236 +1,172 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
-import { fetchMediaByQuery, type TmdbMediaItem } from '../../api/movieApi';
+import { mediaPath, searchMedia, type MediaSummary } from '../../api/mediaApi';
+import type { CurrentUser } from '../../api/authApi';
 import { SearchResultItem } from './SearchResultItem';
+import { FriendRequestsMenu } from './FriendRequestsMenu';
+import { Avatar } from '../common/Avatar';
+import { useClickOutside } from '../../utils/useClickOutside';
 
-export interface NavbarUser {
-    nickname: string;
-    userEmail: string;
-}
+const SEARCH_DELAY_MS = 1300;
 
 interface NavbarProps {
-    currentUser: NavbarUser | null;
-    onSignUp?: () => void;
-    onLogIn?: () => void;
-    onLogOut?: () => void;
-    onOpenRateModal?: () => void;
-    onSelectItem?: (item: TmdbMediaItem) => void;
+    currentUser: CurrentUser | null;
+    onSignUp: () => void;
+    onLogIn: () => void;
+    onLogOut: () => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-    currentUser,
-    onSignUp,
-    onLogIn,
-    onLogOut,
-    onOpenRateModal,
-    onSelectItem
-}) => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [searchResults, setSearchResults] = useState<TmdbMediaItem[]>([]);
-    const [isSearching, setIsSearching] = useState(false);
-    const [showResults, setShowResults] = useState(false);
-    const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-    const searchRef = useRef<HTMLDivElement>(null);
-    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const navigate = useNavigate();
-
-    const handleBrandClick = () => {
-        if (currentUser) {
-            setSearchQuery('');
-            setShowResults(false);
-            navigate('/');
-        }
-    };
-
-    // Close results dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-                setShowResults(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
-
-    const executeSearch = useCallback(async (query: string) => {
-        const trimmed = query.trim();
-        if (!trimmed) {
-            setSearchResults([]);
-            setShowResults(false);
-            setIsSearching(false);
-            return;
-        }
-
-        setIsSearching(true);
-        setShowResults(true);
-
-        try {
-            const results = await fetchMediaByQuery(trimmed, 1);
-            setSearchResults(results);
-        } catch (error) {
-            console.error('Error fetching search results:', error);
-            setSearchResults([]);
-        } finally {
-            setIsSearching(false);
-        }
-    }, []);
-
-    // 1.3-second buffer: auto-fires search when the user stops typing
-    useEffect(() => {
-        const trimmed = searchQuery.trim();
-
-        if (!trimmed) {
-            setSearchResults([]);
-            setShowResults(false);
-            setIsSearching(false);
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-            return;
-        }
-
-        setIsSearching(true);
-        setShowResults(true);
-
-        if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-        }
-
-        debounceTimerRef.current = setTimeout(() => {
-            executeSearch(trimmed);
-        }, 1300);
-
-        return () => {
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-        };
-    }, [searchQuery, executeSearch]);
-
-    // Optional shortcut: pressing Enter searches immediately without waiting for the buffer
-    const handleSearchSubmit = (e: React.SyntheticEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-        }
-        executeSearch(searchQuery);
-    };
-
+export function Navbar({ currentUser, onSignUp, onLogIn, onLogOut }: NavbarProps) {
     return (
         <header className={styles.header}>
             <div className={styles.container}>
-                <div className={styles.brand} onClick={handleBrandClick}>
-                    <div className={styles.brandIcon}>P</div>
+                <Link to="/" className={styles.brand}>
+                    <span className={styles.brandIcon}>P</span>
                     <span className={styles.brandText}>PostCredits</span>
-                </div>
+                </Link>
 
-                {/* Only render the search bar when user is authenticated */}
-                {currentUser && (
-                    <div className={styles.searchContainer} ref={searchRef}>
-                        <form className={styles.searchWrapper} onSubmit={handleSearchSubmit}>
-                            <span className={styles.searchIcon}>
-                                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
-                                    <circle cx="11" cy="11" r="8" />
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                </svg>
-                            </span>
-                            <input
-                                type="search"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onFocus={() => {
-                                    if (searchResults.length > 0 || searchQuery.trim()) {
-                                        setShowResults(true);
-                                    }
-                                }}
-                                placeholder="Search movies, series, or users..."
-                                className={styles.searchInput}
-                            />
-                        </form>
-
-                        {/* Dropdown with dynamic search results */}
-                        {showResults && (
-                            <div className={styles.resultsDropdown}>
-                                {isSearching ? (
-                                    <div className={styles.searchStatus}>Searching...</div>
-                                ) : searchResults.length > 0 ? (
-                                    <ul className={styles.resultsList}>
-                                        {searchResults.slice(0, 20).map((item) => (
-                                            <SearchResultItem
-                                                key={`${item.media_type || 'item'}-${item.id}`}
-                                                item={item}
-                                                onSelect={(selected) => {
-                                                    setShowResults(false);
-                                                    setSearchQuery('');
-                                                    if (onSelectItem) onSelectItem(selected);
-                                                }}
-                                            />
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div className={styles.searchStatus}>No results found.</div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
+                {currentUser && <MediaSearch />}
 
                 <div className={styles.actionsGroup}>
                     {currentUser ? (
                         <>
-                            <div className={styles.userMenuWrapper}>
-                                <button
-                                    type="button"
-                                    className={styles.userMenuButton}
-                                    onClick={() => setUserMenuOpen((prev) => !prev)}
-                                    aria-expanded={userMenuOpen}
-                                >
-                                    <span className={styles.userMenuText}>{currentUser.nickname}</span>
-                                    <span className={`${styles.userMenuCaret} ${userMenuOpen ? styles.userMenuCaretOpen : ''}`}>
-                                        ▾
-                                    </span>
-                                </button>
-
-                                {userMenuOpen && (
-                                    <div className={styles.dropdownMenu}>
-                                        <button
-                                            type="button"
-                                            className={styles.dropdownItem}
-                                            onClick={() => {
-                                                setUserMenuOpen(false);
-                                                if (onLogOut) onLogOut();
-                                            }}
-                                        >
-                                            Log Out
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-
-                            <button
-                                type="button"
-                                className={styles.rateLogButton}
-                                onClick={onOpenRateModal}
-                            >
-                                <span>+</span> Rate / Log
-                            </button>
+                            <UserMenu nickname={currentUser.nickname} onLogOut={onLogOut} />
+                            <FriendRequestsMenu />
+                            <Link to="/list" className={styles.primaryButton}>My List</Link>
                         </>
                     ) : (
                         <>
-                            <button type="button" className={styles.loginBtn} onClick={onLogIn}>
-                                LOG IN
-                            </button>
-                            <button type="button" className={styles.signUpBtn} onClick={onSignUp}>
-                                SIGN UP
-                            </button>
+                            <button type="button" className={styles.loginBtn} onClick={onLogIn}>LOG IN</button>
+                            <button type="button" className={styles.signUpBtn} onClick={onSignUp}>SIGN UP</button>
                         </>
                     )}
                 </div>
             </div>
         </header>
     );
-};
+}
+
+function MediaSearch() {
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState<MediaSummary[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [submitted, setSubmitted] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+
+    useClickOutside(containerRef, () => setOpen(false));
+
+    // Searches once the user stops typing for a moment (or right away after Enter).
+    useEffect(() => {
+        const term = query.trim();
+        if (!term) return;
+
+        let active = true;
+        const timer = setTimeout(() => {
+            searchMedia(term)
+                .then((found) => active && setResults(found))
+                .catch(() => active && setResults([]))
+                .finally(() => active && setIsSearching(false));
+        }, submitted ? 0 : SEARCH_DELAY_MS);
+
+        return () => {
+            active = false;
+            clearTimeout(timer);
+        };
+    }, [query, submitted]);
+
+    const select = (item: MediaSummary) => {
+        setOpen(false);
+        setQuery('');
+        navigate(mediaPath(item.mediaType, item.id));
+    };
+
+    return (
+        <div className={styles.searchContainer} ref={containerRef}>
+            <form
+                className={styles.searchWrapper}
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!query.trim()) return;
+                    setIsSearching(true);
+                    setSubmitted((n) => n + 1);
+                }}
+            >
+                <span className={styles.searchIcon}>
+                    <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </span>
+                <input
+                    type="search"
+                    value={query}
+                    onChange={(e) => {
+                        const hasTerm = e.target.value.trim() !== '';
+                        setQuery(e.target.value);
+                        setSubmitted(0);
+                        setIsSearching(hasTerm);
+                        setOpen(hasTerm);
+                    }}
+                    onFocus={() => query.trim() && setOpen(true)}
+                    placeholder="Search movies and series..."
+                    className={styles.searchInput}
+                />
+            </form>
+
+            {open && query.trim() && (
+                <div className={styles.resultsDropdown}>
+                    {isSearching ? (
+                        <div className={styles.searchStatus}>Searching...</div>
+                    ) : results.length > 0 ? (
+                        <ul className={styles.resultsList}>
+                            {results.slice(0, 20).map((item) => (
+                                <SearchResultItem key={`${item.mediaType}-${item.id}`} item={item} onSelect={select} />
+                            ))}
+                        </ul>
+                    ) : (
+                        <div className={styles.searchStatus}>No results found.</div>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function UserMenu({ nickname, onLogOut }: { nickname: string; onLogOut: () => void }) {
+    const [open, setOpen] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+    useClickOutside(ref, () => setOpen(false));
+
+    return (
+        <div className={styles.userMenuWrapper} ref={ref}>
+            <button
+                type="button"
+                className={styles.userMenuButton}
+                onClick={() => setOpen((prev) => !prev)}
+                aria-expanded={open}
+            >
+                <Avatar name={nickname} size={24} />
+                <span className={styles.userMenuText}>{nickname}</span>
+                <span className={`${styles.userMenuCaret} ${open ? styles.userMenuCaretOpen : ''}`}>▾</span>
+            </button>
+
+            {open && (
+                <div className={styles.dropdownMenu}>
+                    <button
+                        type="button"
+                        className={styles.dropdownItem}
+                        onClick={() => {
+                            setOpen(false);
+                            onLogOut();
+                        }}
+                    >
+                        Log Out
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+}

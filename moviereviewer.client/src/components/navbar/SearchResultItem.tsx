@@ -1,25 +1,21 @@
-import React from 'react';
-import styles from './SearchResultItem.module.css'; 
-import type { TmdbMediaItem } from '../../api/movieApi';
+import styles from './SearchResultItem.module.css';
+import { tmdbImage, type MediaSummary } from '../../api/mediaApi';
 
 interface SearchResultItemProps {
-    item: TmdbMediaItem;
-    onSelect?: (item: TmdbMediaItem) => void;
+    item: MediaSummary;
+    onSelect: (item: MediaSummary) => void;
 }
 
-export const SearchResultItem: React.FC<SearchResultItemProps> = ({ item, onSelect }) => {
-    const title = item.title || item.name || 'Untitled';
-    const releaseDate = item.release_date || item.first_air_date || 'Unknown';
-    const year = releaseDate ? releaseDate.substring(0, 4) : 'Unknown';
-    const isMovie = item.media_type === 'movie' || (!item.media_type && item.title);
-
-    const posterUrl = item.poster_path ? `https://image.tmdb.org/t/p/w92${item.poster_path}` : 'null';
+export function SearchResultItem({ item, onSelect }: SearchResultItemProps) {
+    const year = item.releaseDate?.substring(0, 4);
+    const posterUrl = tmdbImage(item.posterPath, 'w92');
+    const isMovie = item.mediaType === 'movie';
 
     return (
-        <li className={styles.item} onClick={() => onSelect && onSelect(item)}>
+        <li className={styles.item} onClick={() => onSelect(item)}>
             <div className={styles.posterWrapper}>
                 {posterUrl ? (
-                    <img src={posterUrl} alt={title} className={styles.poster} />
+                    <img src={posterUrl} alt="" className={styles.poster} />
                 ) : (
                     <div className={styles.posterPlaceholder}>
                         <span>🎬</span>
@@ -29,19 +25,17 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({ item, onSele
 
             <div className={styles.info}>
                 <div className={styles.titleRow}>
-                    <span className={styles.title}>{title}</span>
+                    <span className={styles.title}>{item.title}</span>
                     {year && <span className={styles.year}>({year})</span>}
                 </div>
 
                 <div className={styles.metaRow}>
                     <span className={`${styles.badge} ${isMovie ? styles.movieBadge : styles.seriesBadge}`}>
-                        {item.media_type}
+                        {isMovie ? 'movie' : 'series'}
                     </span>
-                    {item.overview && (
-                        <p className={styles.overview}>{item.overview}</p>
-                    )}
+                    {item.overview && <p className={styles.overview}>{item.overview}</p>}
                 </div>
             </div>
         </li>
     );
-};
+}

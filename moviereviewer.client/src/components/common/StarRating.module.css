@@ -1,0 +1,45 @@
+.row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1em;
+    line-height: 1;
+}
+
+.star {
+    position: relative;
+    display: inline-flex;
+    user-select: none;
+}
+
+.base {
+    color: #cbd5e1;
+}
+
+.fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    overflow: hidden;
+    color: #f59e0b;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.halfLeft,
+.halfRight {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.halfLeft {
+    left: 0;
+}
+
+.halfRight {
+    right: 0;
+}

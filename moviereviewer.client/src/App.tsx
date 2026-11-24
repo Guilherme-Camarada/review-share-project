@@ -1,74 +1,62 @@
-﻿import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useParams, Outlet } from 'react-router-dom';
+﻿import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { Navigate, Outlet, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from './components/navbar/Navbar';
 import { LandingPage } from './components/landing/LandingPage';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { AuthModal } from './components/auth/AuthModal';
 import { ConfirmEmail } from './components/auth/ConfirmEmail';
 import { ResetPassword } from './components/auth/ResetPassword';
-import { checkAuthStatus, logoutUser } from './api/authApi';
-import type { TmdbMediaItem } from './api/movieApi';
 import { MediaDetails } from './components/pages/MediaDetails';
+import { MyList } from './components/pages/MyList';
+import { checkAuthStatus, logoutUser, type CurrentUser } from './api/authApi';
+import type { MediaType } from './api/mediaApi';
 
-interface User {
-    nickname: string;
-    userEmail: string;
+const STORAGE_KEY = 'currentUser';
+
+function loadStoredUser(): CurrentUser | null {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch {
+        return null;
+    }
 }
 
-function MediaDetailsRoute({ mediaType }: { mediaType: 'movie' | 'series' }) {
+function MediaDetailsRoute({ mediaType }: { mediaType: MediaType }) {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
+    const numericId = Number(id);
 
-    if (!id) return null;
+    if (!Number.isInteger(numericId)) return <Navigate to="/" replace />;
 
-    return (
-        <MediaDetails
-            key={`${mediaType}-${id}`}
-            id={parseInt(id, 10)}
-            mediaType={mediaType}
-            onBack={() => navigate(-1)}
-            onOpenRateModal={() => console.log('Open Rate/Log Modal')}
-        />
-    );
+    return <MediaDetails key={`${mediaType}-${numericId}`} id={numericId} mediaType={mediaType} onBack={() => navigate(-1)} />;
 }
 
 export default function App() {
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<User | null>(() => {
-        const savedUser = localStorage.getItem('currentUser');
-        return savedUser ? JSON.parse(savedUser) : null;
-    });
+    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(loadStoredUser);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(() => currentUser === null);
+    const [authMode, setAuthMode] = useState<'login' | 'signup' | null>(null);
 
-    const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(() =>
-        !localStorage.getItem('currentUser')
-    );
-
-    const [authModalOpen, setAuthModalOpen] = useState(false);
-    const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-
-    useEffect(() => {
-        checkAuthStatus()
-            .then((data: any) => {
-                const validatedUser: User = {
-                    nickname: data.nickname || 'User',
-                    userEmail: data.userEmail || ''
-                };
-                setCurrentUser(validatedUser);
-                localStorage.setItem('currentUser', JSON.stringify(validatedUser));
-            })
-            .catch((_error) => {
-                setCurrentUser(null);
-                localStorage.removeItem('currentUser');
-            })
-            .finally(() => {
-                setIsCheckingAuth(false);
-            });
+    // Stable identity: ConfirmEmail's effect depends on it.
+    const signIn = useCallback((user: CurrentUser) => {
+        const validated = { nickname: user.nickname || 'User', userEmail: user.userEmail || '' };
+        setCurrentUser(validated);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validated));
     }, []);
 
-    const openAuth = (mode: 'login' | 'signup') => {
-        setAuthMode(mode);
-        setAuthModalOpen(true);
-    };
+    const clearUser = useCallback(() => {
+        setCurrentUser(null);
+        localStorage.removeItem(STORAGE_KEY);
+    }, []);
+
+    // The cached user only avoids a flash of the landing page; the server has the final say.
+    useEffect(() => {
+        checkAuthStatus()
+            .then(signIn)
+            .catch(clearUser)
+            .finally(() => setIsCheckingAuth(false));
+    }, [signIn, clearUser]);
 
     const handleLogout = async () => {
         try {
@@ -76,9 +64,7 @@ export default function App() {
         } catch (error) {
             console.error('Logout request failed on server:', error);
         } finally {
-            // Instantly clear memory and stored session so the UI switches without page reload
-            setCurrentUser(null);
-            localStorage.removeItem('currentUser');
+            clearUser();
             sessionStorage.clear();
             navigate('/');
         }
@@ -86,81 +72,42 @@ export default function App() {
 
     if (isCheckingAuth) return null;
 
+    const requireUser = (element: ReactElement) => (currentUser ? element : <Navigate to="/" replace />);
+
     return (
         <Routes>
-            {/* Rotas de Autenticação isoladas (sem Navbar) */}
-            <Route
-                path="/confirm-email"
-                element={
-                    <ConfirmEmail
-                        onUserLoggedIn={(userData) => {
-                            const validatedUser: User = {
-                                nickname: userData.nickname,
-                                userEmail: userData.userEmail,
-                            };
-                            setCurrentUser(validatedUser);
-                            localStorage.setItem('currentUser', JSON.stringify(validatedUser));
-                        }}
-                    />
-                }
-            />
+            {/* Auth pages have no navbar */}
+            <Route path="/confirm-email" element={<ConfirmEmail onUserLoggedIn={signIn} />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Layout Principal: Navbar e AuthModal partilhados entre as páginas */}
             <Route
                 element={
                     <>
                         <Navbar
                             currentUser={currentUser}
-                            onSelectItem={(item: TmdbMediaItem) => {
-                                const isTv = item.media_type === 'tv' || (!item.title && !!item.name);
-                                navigate(isTv ? `/series/${item.id}` : `/movie/${item.id}`);
-                            }}
-                            onSignUp={() => openAuth('signup')}
-                            onLogIn={() => openAuth('login')}
+                            onSignUp={() => setAuthMode('signup')}
+                            onLogIn={() => setAuthMode('login')}
                             onLogOut={handleLogout}
-                            onOpenRateModal={() => console.log('Open Rate/Log Modal')}
                         />
-
-                        {/* O conteúdo da rota ativa é renderizado aqui */}
                         <Outlet />
-
                         <AuthModal
-                            isOpen={authModalOpen}
-                            initialMode={authMode}
-                            onClose={() => setAuthModalOpen(false)}
-                            onSuccess={(user) => {
-                                const validatedUser: User = {
-                                    nickname: user.nickname || 'David',
-                                    userEmail: user.userEmail || 'user@reelshare.com',
-                                };
-                                setCurrentUser(validatedUser);
-                                localStorage.setItem('currentUser', JSON.stringify(validatedUser));
-                            }}
+                            isOpen={authMode !== null}
+                            initialMode={authMode ?? 'login'}
+                            onClose={() => setAuthMode(null)}
+                            onSuccess={signIn}
                         />
                     </>
                 }
             >
-                {/* Página Inicial (Dashboard ou Landing) */}
                 <Route
                     path="/"
-                    element={
-                        !currentUser ? (
-                            <LandingPage onOpenAuth={openAuth} />
-                        ) : (
-                            <Dashboard
-                                user={currentUser}
-                                onLogout={handleLogout}
-                                onOpenRateLogModal={() => console.log('Open Rate/Log Modal')}
-                            />
-                        )
-                    }
+                    element={currentUser ? <Dashboard nickname={currentUser.nickname} /> : <LandingPage onOpenAuth={setAuthMode} />}
                 />
-
-                {/* Rotas para os Detalhes da Media */}
-                <Route path="/movie/:id" element={<MediaDetailsRoute mediaType="movie" />} />
-                <Route path="/series/:id" element={<MediaDetailsRoute mediaType="series" />} />
-                <Route path="/tv/:id" element={<MediaDetailsRoute mediaType="series" />} />
+                <Route path="/list" element={requireUser(<MyList />)} />
+                <Route path="/movie/:id" element={requireUser(<MediaDetailsRoute mediaType="movie" />)} />
+                <Route path="/tv/:id" element={requireUser(<MediaDetailsRoute mediaType="tv" />)} />
+                <Route path="/series/:id" element={requireUser(<MediaDetailsRoute mediaType="tv" />)} />
+                <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
         </Routes>
     );

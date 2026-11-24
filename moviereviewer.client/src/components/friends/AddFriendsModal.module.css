@@ -1,0 +1,130 @@
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10vh 1rem 1rem;
+    background-color: rgba(15, 23, 42, 0.45);
+}
+
+.modal {
+    width: 100%;
+    max-width: 440px;
+    max-height: 80vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.subTitle {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.closeBtn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: #64748b;
+    cursor: pointer;
+}
+
+    .closeBtn:hover {
+        background-color: #f1f5f9;
+    }
+
+.searchInput {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid #dcd7cc;
+    border-radius: 9px;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+    .searchInput:focus {
+        border-color: #94a3b8;
+    }
+
+.list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.45rem 0.25rem;
+}
+
+.name {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.muted {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.error {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #dc2626;
+}
+
+.primaryBtn,
+.secondaryBtn {
+    flex-shrink: 0;
+    padding: 0.35rem 0.75rem;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.primaryBtn {
+    border: 1px solid #0f172a;
+    background-color: #0f172a;
+    color: #ffffff;
+}
+
+.secondaryBtn {
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #334155;
+}
+
+    .secondaryBtn:hover {
+        background-color: #f8fafc;
+    }

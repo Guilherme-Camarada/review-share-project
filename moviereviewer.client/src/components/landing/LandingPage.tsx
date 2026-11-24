@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './LandingPage.module.css';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import type { LandingPageProps, FeatureCardItem } from '../../types/landing';
@@ -35,15 +35,6 @@ const FEATURE_CARDS: FeatureCardItem[] = [
 ];
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onOpenAuth }) => {
-    const [searchQuery, setSearchQuery] = useState('');
-
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (searchQuery.trim()) {
-            onOpenAuth('signup');
-        }
-    };
-
     return (
         <div className={styles.landingWrapper}>
             {/* 1. Hero Area */}
