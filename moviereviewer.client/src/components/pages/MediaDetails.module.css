@@ -30,8 +30,8 @@
 
 /* 1. Pin the poster and title to the exact same top position for both movies and series */
 .heroOverlay {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    min-height: 520px;
     background: linear-gradient( 90deg, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0.88) 45%, rgba(15, 23, 42, 0.45) 80%, rgba(15, 23, 42, 0.25) 100% );
     display: flex;
     align-items: flex-start; /* Changed from center to align both layouts at the same top offset */

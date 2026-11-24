@@ -9,7 +9,7 @@ import { Avatar } from '../common/Avatar';
 import { AddFriendsModal } from '../friends/AddFriendsModal';
 
 export function FriendsFeedSection() {
-    const activity = useLoad(() => fetchFriendActivity(8), []);
+    const activity = useLoad(() => fetchFriendActivity(5), []);
     const [addOpen, setAddOpen] = useState(false);
 
     return (

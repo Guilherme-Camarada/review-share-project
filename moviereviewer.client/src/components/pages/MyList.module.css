@@ -179,16 +179,22 @@
     color: #94a3b8;
 }
 
-@media (max-width: 640px) {
-    .page {
-        padding: 1rem;
-    }
-
+@media (max-width: 900px) {
     .hideSmall {
         display: none;
     }
 
     .reviewSnippet {
-        max-width: 160px;
+        max-width: 220px;
+    }
+}
+
+@media (max-width: 640px) {
+    .page {
+        padding: 1rem;
+    }
+
+    .reviewSnippet {
+        max-width: 140px;
     }
 }
